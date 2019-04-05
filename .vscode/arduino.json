@@ -1,0 +1,6 @@
+{
+    "sketch": "thermocouple_single.ino",
+    "board": "arduino:avr:uno",
+    "output": "build",
+    "port": "/dev/ttyACM0"
+}

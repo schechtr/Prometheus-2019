@@ -1,0 +1,37 @@
+[
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "/home/andrew/Downloads/arduino-1.8.9/hardware/arduino/avr/cores/arduino"
+  },
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "/home/andrew/Downloads/arduino-1.8.9/hardware/arduino/avr/variants/standard"
+  },
+  {
+    "Sourcefile": "/home/andrew/Prometheus-2019/build/sketch/thermocouple_single.ino.cpp",
+    "Include": "Adafruit_MAX31856.h",
+    "Includepath": "/home/andrew/Arduino/libraries/Adafruit_MAX31856-master"
+  },
+  {
+    "Sourcefile": "/home/andrew/Prometheus-2019/build/sketch/thermocouple_single.ino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "/home/andrew/Arduino/libraries/Adafruit_MAX31856-master/Adafruit_MAX31856.cpp",
+    "Include": "SPI.h",
+    "Includepath": "/home/andrew/Downloads/arduino-1.8.9/hardware/arduino/avr/libraries/SPI/src"
+  },
+  {
+    "Sourcefile": "/home/andrew/Arduino/libraries/Adafruit_MAX31856-master/Adafruit_MAX31856.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "/home/andrew/Downloads/arduino-1.8.9/hardware/arduino/avr/libraries/SPI/src/SPI.cpp",
+    "Include": "",
+    "Includepath": ""
+  }
+]
