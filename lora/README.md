@@ -9,5 +9,5 @@
   rf95.setTxPower(23, false);
 
 ### recieved signal strength RSSI:
-	- It also prints out the RSSI which is the receiver signal strength indicator. This number will range from about -15 to 	about -100. The larger the number (-15 being the highest you'll likely see) the stronger the signal.
+ - It also prints out the RSSI which is the receiver signal strength indicator. This number will range from about -15 to 	about -100. The larger the number (-15 being the highest you'll likely see) the stronger the signal.
 
