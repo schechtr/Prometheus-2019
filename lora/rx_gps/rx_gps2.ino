@@ -33,11 +33,12 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 #define LNG -118
 
 struct gpsCoordinate {
-   double lat;
-   double lng;
-   uint16_t packet_num;
+  uint8_t lat;
+  uint8_t lng;
 } coord;
 
+
+int packet_num = 0;
 
 void setup()
 {
@@ -78,7 +79,7 @@ void setup()
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
-  int packet_num = 0;
+
 }
 
 void loop()
