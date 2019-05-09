@@ -33,8 +33,8 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 #define LNG -118
 
 struct gpsCoordinate {
-  uint8_t lat;
-  uint8_t lng;
+  uint16_t lat;
+  uint16_t lng;
 } coord;
 
 
@@ -100,11 +100,11 @@ void loop()
       Serial.print("Got: ");
       Serial.print(LAT);
       Serial.print(".");
-      Serial.print(coord.lat);
+      Serial.print(((coord.lat << 16) / 10000));  // Receives 2 bytes, then rounds down
       Serial.print(", ");
       Serial.print(LNG);
       Serial.print(".");
-      Serial.print(coord.lng);
+      Serial.print(((coord.lat << 16) / 10000));  // Receives 2 bytes, then rounds down
 
       Serial.println("Packet: ");
       Serial.print(packet_num);
