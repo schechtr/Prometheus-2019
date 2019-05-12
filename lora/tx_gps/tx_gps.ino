@@ -20,14 +20,35 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 TinyGPSPlus gps;
 
-// curently 10 bytes, but we can reduce that if needed. Packet Num is unecesary.
-// Just needed for testing.
+// 4 bytes
 struct gpsCoordinate {
     uint16_t lat;
     uint16_t lng;
 } coord;
 
 uint8_t tx_buf[sizeof(coord)];
+
+void printFormatted(uint16_t coordVal) {  // For some reason sprintf doesn't
+                                          // work, so we're doing this instead
+                                          // it's aids.
+    uint32_t adjustedVal = (uint32_t)coordVal << 16;
+    char toPrint[11];
+    toPrint = itoa(adjustedVal, 10);
+    uint8_t adjustedIndex = 0;
+
+    int limit = 1000000000 // billion
+    uint8_t i;
+    for (i = 0; i < 5; i++) { // Pad with zeroes
+        if (adjustedVal < limit[i]) {
+            limit /= 10;
+            toPrint[i] = '0';
+        } else {
+            break;
+        }
+    }
+    toPrint[5 - i] = '\0';  // Cut off everything after 5 digits
+    Serial.print(toPrint);
+}
 
 void setup() {
     pinMode(RFM95_RST, OUTPUT);
@@ -78,12 +99,13 @@ void setup() {
 }
 
 void loop() {
-    //Serial.print("loop");
+    int m;
+    // Serial.print("loop");
     if (gpsSerial.available()) {
-        //Serial.print("loop");
+        // Serial.print("loop");
         gps.encode(gpsSerial.read());
         if (gps.location.isUpdated()) {
-            //Serial.println("loop");
+            // Serial.println("loop");
 
             coord.lat = (uint16_t)(gps.location.rawLat().billionths >> 16);
             coord.lng = (uint16_t)(gps.location.rawLng().billionths >> 16);
@@ -93,12 +115,13 @@ void loop() {
             uint8_t tx_buf_len = sizeof(coord);
 
             if (DEBUG) {
-                //Serial.print("loop");
                 Serial.println(gps.location.rawLat().billionths);
                 Serial.println(gps.location.rawLng().billionths);
-                Serial.print(coord.lat);
+                printFormatted(coord.lat);
                 Serial.print(", ");
-                Serial.print(coord.lng);
+                printFormatted(coord.lng);
+                Serial.println("");
+                Serial.print(tx_buf_len);
                 // Serial.print(", Packet Num: ");
                 // Serial.println(coord.packet_num);
 

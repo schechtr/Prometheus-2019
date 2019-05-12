@@ -37,6 +37,27 @@ struct gpsCoordinate {
   uint16_t lng;
 } coord;
 
+void printFormatted(uint16_t coordVal) {  // For some reason sprintf doesn't
+                                          // work, so we're doing this instead
+                                          // it's aids.
+    uint32_t adjustedVal = (uint32_t)coordVal << 16;
+    char toPrint[11];
+    toPrint = itoa(adjustedVal, 10);
+    uint8_t adjustedIndex = 0;
+
+    int limit = 1000000000 // billion
+    uint8_t i;
+    for (i = 0; i < 5; i++) { // Pad with zeroes
+        if (adjustedVal < limit[i]) {
+            limit /= 10;
+            toPrint[i] = '0';
+        } else {
+            break;
+        }
+    }
+    toPrint[5 - i] = '\0';  // Cut off everything after 5 digits
+    Serial.print(toPrint);
+}
 
 int packet_num = 0;
 
@@ -100,11 +121,11 @@ void loop()
       Serial.print("Got: ");
       Serial.print(LAT);
       Serial.print(".");
-      Serial.print(((coord.lat << 16) / 10000));  // Receives 2 bytes, then rounds down
+      printFormatted(coord.lat);  // Receives 2 bytes, then rounds down
       Serial.print(", ");
       Serial.print(LNG);
       Serial.print(".");
-      Serial.print(((coord.lat << 16) / 10000));  // Receives 2 bytes, then rounds down
+      printFormatted(coord.lng);  // Receives 2 bytes, then rounds down
 
       Serial.println("Packet: ");
       Serial.print(packet_num);
