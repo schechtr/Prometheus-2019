@@ -28,38 +28,12 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Blinky on receipt
 #define LED 13
 
-// IMPORTANT: MUST CHANGE THESE VALUES BEFORE LAUNCH!!
-#define LAT 34
-#define LNG -118
-
 struct gpsCoordinate {
-  uint16_t lat;
-  uint16_t lng;
+   double lat;
+   double lng;
+   uint16_t packet_num;
 } coord;
 
-void printFormatted(uint16_t coordVal) {  // For some reason sprintf doesn't
-                                          // work, so we're doing this instead
-                                          // it's aids.
-    uint32_t adjustedVal = (uint32_t)coordVal << 16;
-    char toPrint[11];
-    toPrint = itoa(adjustedVal, 10);
-    uint8_t adjustedIndex = 0;
-
-    int limit = 1000000000 // billion
-    uint8_t i;
-    for (i = 0; i < 5; i++) { // Pad with zeroes
-        if (adjustedVal < limit[i]) {
-            limit /= 10;
-            toPrint[i] = '0';
-        } else {
-            break;
-        }
-    }
-    toPrint[5 - i] = '\0';  // Cut off everything after 5 digits
-    Serial.print(toPrint);
-}
-
-int packet_num = 0;
 
 void setup()
 {
@@ -99,8 +73,6 @@ void setup()
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
-
-
 }
 
 void loop()
@@ -113,25 +85,16 @@ void loop()
 
     if (rf95.recv(buf, &len))
     {
-      packet_num++;
       digitalWrite(LED, HIGH);
     
       // gps reading
       memcpy(&coord, buf, sizeof(coord));
       Serial.print("Got: ");
-      Serial.print(LAT);
-      Serial.print(".");
-      printFormatted(coord.lat);  // Receives 2 bytes, then rounds down
+      Serial.print(coord.lat, 6);
       Serial.print(", ");
-      Serial.print(LNG);
-      Serial.print(".");
-      printFormatted(coord.lng);  // Receives 2 bytes, then rounds down
-
-      Serial.println("Packet: ");
-      Serial.print(packet_num);
-
-      /*Serial.print(", Packet Num: ");
-      Serial.println(coord.packet_num);*/
+      Serial.print(coord.lng, 6);
+      Serial.print(", Packet Num: ");
+      Serial.println(coord.packet_num);
 
       // rssi
       Serial.print("RSSI: ");

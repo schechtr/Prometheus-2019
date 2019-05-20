@@ -20,35 +20,14 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 TinyGPSPlus gps;
 
-// 4 bytes
+// curently 10 bytes, but we can reduce that if needed. Packet Num is unecesary.
+// Just needed for testing.
 struct gpsCoordinate {
     uint16_t lat;
     uint16_t lng;
 } coord;
 
 uint8_t tx_buf[sizeof(coord)];
-
-void printFormatted(uint16_t coordVal) {  // For some reason sprintf doesn't
-                                          // work, so we're doing this instead
-                                          // it's aids.
-    uint32_t adjustedVal = (uint32_t)coordVal << 16;
-    char toPrint[11];
-    toPrint = itoa(adjustedVal, 10);
-    uint8_t adjustedIndex = 0;
-
-    int limit = 1000000000 // billion
-    uint8_t i;
-    for (i = 0; i < 5; i++) { // Pad with zeroes
-        if (adjustedVal < limit[i]) {
-            limit /= 10;
-            toPrint[i] = '0';
-        } else {
-            break;
-        }
-    }
-    toPrint[5 - i] = '\0';  // Cut off everything after 5 digits
-    Serial.print(toPrint);
-}
 
 void setup() {
     pinMode(RFM95_RST, OUTPUT);
@@ -100,31 +79,41 @@ void setup() {
 
 void loop() {
     int m;
+    uint32_t lat, lng;
     // Serial.print("loop");
     if (gpsSerial.available()) {
-        // Serial.print("loop");
+      //Serial.write(gpsSerial.read());
+        //Serial.print('\n');
+        //return;
         gps.encode(gpsSerial.read());
         if (gps.location.isUpdated()) {
             // Serial.println("loop");
 
-            coord.lat = (uint16_t)(gps.location.rawLat().billionths >> 16);
-            coord.lng = (uint16_t)(gps.location.rawLng().billionths >> 16);
+            lat = gps.location.rawLat().billionths;
+            lng = gps.location.rawLng().billionths;
+
+            lat += ((lat & 0x00008000) << 1);     // Rounding
+            lng += ((lng & 0x00008000) << 1);
+
+            coord.lat = (uint16_t)(lat >> 16);
+            coord.lng = (uint16_t)(lng >> 16);
             // coord.packet_num += 1;
 
             memcpy(tx_buf, &coord, sizeof(coord));
             uint8_t tx_buf_len = sizeof(coord);
 
+            char buf[50];
+            
             if (DEBUG) {
-                Serial.println(gps.location.rawLat().billionths);
-                Serial.println(gps.location.rawLng().billionths);
-                printFormatted(coord.lat);
+                //Serial.println((gps.location.rawLng().billionths) / 1000);
+                Serial.println(coord.lat << 16);
+                sprintf(buf, "%05lu", ((uint32_t)coord.lat << 16));
+                buf[5] = '\0';
+                Serial.print(buf);
                 Serial.print(", ");
-                printFormatted(coord.lng);
-                Serial.println("");
-                Serial.print(tx_buf_len);
-                // Serial.print(", Packet Num: ");
-                // Serial.println(coord.packet_num);
-
+                sprintf(buf, "%05lu", ((uint32_t)coord.lng << 16));
+                buf[5] = '\0';
+                Serial.println(buf);
                 Serial.println(tx_buf_len);
                 Serial.println("Sending...");
             }
