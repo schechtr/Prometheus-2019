@@ -27,6 +27,14 @@ struct gpsCoordinate {
     uint16_t lng;
 } coord;
 
+void printFormatted(uint16_t coordVal) {  // Prints decimal value
+    uint32_t adjustedVal = (uint32_t)coordVal << 16;
+    char toPrint[10];
+    sprintf(toPrint, "%09lu", adjustedVal);  // Pad with zeroes
+    toPrint[5] = '\0';                       // Truncate to 5 sigfigs
+    Serial.print(toPrint);
+}
+
 uint8_t tx_buf[sizeof(coord)];
 
 void setup() {
@@ -106,14 +114,10 @@ void loop() {
             
             if (DEBUG) {
                 //Serial.println((gps.location.rawLng().billionths) / 1000);
-                Serial.println(coord.lat << 16);
-                sprintf(buf, "%05lu", ((uint32_t)coord.lat << 16));
-                buf[5] = '\0';
-                Serial.print(buf);
+                printFormatted(coord.lat);
                 Serial.print(", ");
-                sprintf(buf, "%05lu", ((uint32_t)coord.lng << 16));
-                buf[5] = '\0';
-                Serial.println(buf);
+                printFormatted(coord.lng);
+                Serial.println("");
                 Serial.println(tx_buf_len);
                 Serial.println("Sending...");
             }

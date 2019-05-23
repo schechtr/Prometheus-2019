@@ -39,10 +39,10 @@ struct gpsCoordinate {
 
 void printFormatted(uint16_t coordVal) {  // Prints decimal value
     uint32_t adjustedVal = (uint32_t)coordVal << 16;
-    char toPrint[15];
-    sprintf(data_buf, "%05lu", adjustedVal);  // Pad with zeroes
-    data_buf[5] = '\0';                       // Truncate to 5 sigfigs
-    Serial.print(data_buf);
+    char toPrint[10];
+    sprintf(toPrint, "%09lu", adjustedVal);  // Pad with zeroes
+    toPrint[5] = '\0';                       // Truncate to 5 sigfigs
+    Serial.print(toPrint);
 }
 
 int packet_num = 0;
