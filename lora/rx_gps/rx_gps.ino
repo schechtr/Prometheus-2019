@@ -35,6 +35,7 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 struct gpsCoordinate {
     uint16_t lat;
     uint16_t lng;
+    uint16_t alt;
 } coord;
 
 void printFormatted(uint16_t coordVal) {  // Prints decimal value
@@ -110,9 +111,12 @@ void loop() {
             Serial.print(LNG);
             Serial.print(".");
             printFormatted(coord.lng);  // Receives 2 bytes, then rounds down
+            Serial.print(";  Altitude: ");
+            Serial.print(coord.alt);
+            Serial.println(" ft");
 
-            Serial.println("Packet: ");
-            Serial.print(packet_num);
+            // Serial.println("Packet: ");
+            // Serial.print(packet_num);
 
             /*Serial.print(", Packet Num: ");
             Serial.println(coord.packet_num);*/

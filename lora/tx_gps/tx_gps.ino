@@ -13,6 +13,8 @@
 #define RF95_FREQ 915.0
 #define gpsSerial Serial1
 
+#define FT_PER_M 0.304800609601
+
 #define DEBUG 1
 
 // Singleton instance of the radio driver
@@ -25,6 +27,7 @@ TinyGPSPlus gps;
 struct gpsCoordinate {
     uint16_t lat;
     uint16_t lng;
+    uint8_t alt;
 } coord;
 
 void printFormatted(uint16_t coordVal) {  // Prints decimal value
@@ -106,9 +109,10 @@ void loop() {
             coord.lat = (uint16_t)(lat >> 16);
             coord.lng = (uint16_t)(lng >> 16);
             // coord.packet_num += 1;
+            coord.alt = (uint16_t)(gps.altitude.meters() * FT_PER_M);   // Make sure this line is correct
 
-            memcpy(tx_buf, &coord, sizeof(coord));
             uint8_t tx_buf_len = sizeof(coord);
+            memcpy(tx_buf, &coord, tx_buf_len);
 
             char buf[50];
             
